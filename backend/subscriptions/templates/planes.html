@@ -1,0 +1,40 @@
+{% extends 'account/base.html' %}
+
+{% load static %}
+
+{% load i18n %}
+
+{% block head_title %}Planes{% endblock %}
+
+
+{% block extra_body %}
+
+  <script
+    async
+    src="https://js.stripe.com/v3/pricing-table.js">
+  </script>
+      {% if subscription.status == "active" %}
+        <h4>Tu suscripción:</h4>
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">
+              {{ product.description }}
+            </p>
+          </div>
+        </div>
+        <a href="{{ STRIPE_CUSTOMER_PORTAL_LINK }}">Ingresa aquí para cancelar o modificar tu suscripción</a>
+        <br />
+        <br />
+        <a href="{% url 'admin:index' %}">Ingresa aquí para ver tus reportes.</a>
+      {% else %}
+          <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+          <stripe-pricing-table
+              pricing-table-id="{{ STRIPE_PRICING_TABLE_ID }}"
+              publishable-key="{{ STRIPE_PUBLISHABLE_KEY }}"
+              client-reference-id="{{ user.id }}"
+          >
+          </stripe-pricing-table>
+      {% endif %}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'account/base.html' %}
+
+{% load i18n %}
+
+{% block head_title %}Pago procesado con éxito{% endblock %}
+
+{% block content %}
+<h3 class="mb-2">Pago procesado con éxito</h3>
+
+      <p>¡El pago ha sido procesado con éxito!</p>
+      <p><a href="{% url 'admin:index' %}">Ingresa aquí para ver tus reportes</a></p>
+
+{% endblock %}
