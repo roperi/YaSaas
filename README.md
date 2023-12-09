@@ -1,42 +1,40 @@
 
 
 
-https://github.com/roperi/yasaas/assets/9901508/f7d47c5d-953f-49aa-bade-41fe3aee13f9
+https://github.com/roperi/YaSaas/assets/9901508/f7d47c5d-953f-49aa-bade-41fe3aee13f9
 
 
-<h1 align="center">YaSaaS - Monetize your data</h1>
+<h1 align="center">YaSaas - Monetize your data</h1>
 <h2 align="center">Open-source Django REST Framework + React SaaS Boilerplate</h2>
 
 ---
 
-Yasaas is an open-source SaaS boilerplate built on Django REST Framework and React, offering a flexible foundation for entrepreneurs looking to monetize their data. 
+YaSaas is an open-source SaaS boilerplate built on Django REST Framework and React, offering a flexible foundation for entrepreneurs looking to monetize their data. 
 
-With seamless integration of Stripe subscriptions and leveraging Django admin functionalities, Yasaas simplifies the process of selling various data products. Whether it's financial data, market insights, or custom datasets, Yasaas provides a practical starting point for individuals keen on exploring data monetization. 
+With seamless integration of Stripe subscriptions and leveraging Django admin functionalities, YaSaas simplifies the process of selling various data products. Whether it's financial data, market insights, or custom datasets, YaSaas provides a practical starting point for individuals keen on exploring data monetization. 
 
-As an open-source solution, Yasaas is freely available, making it accessible for those who want to kickstart their data-driven ventures.
+As an open-source solution, YaSaas is freely available, making it accessible for those who want to kickstart their data-driven ventures.
 
 
 ### Rationale: Or why YaSaas uses Django Admin for end-users
 
-Yasaas leverages Django's robust permission system, utilizing Groups and User permissions for precise data access control. In Django, a Group is a collection of Users, and permissions can be assigned to both Users and Groups. Yasaas utilizes Django admin's intuitive interface to manage these permissions effectively.
+YaSaas leverages Django's robust permission system, utilizing Groups and User permissions for precise data access control. In Django, a Group is a collection of Users, and permissions can be assigned to both Users and Groups. YaSaas utilizes Django admin's intuitive interface to manage these permissions effectively.
 
 Entrepreneurs can create Groups representing different roles or access levels within their application. For example, a "Data Access" Group can be defined. Within this Group, specific permissions related to data access are assigned, ensuring that only authorized users can view or modify sensitive data.
 
-By giving staff privileges to end-users and associating them with relevant Groups, Yasaas provides a flexible and secure way to control access to valuable data. This approach ensures that each user, based on their role or responsibilities, has precisely defined permissions, aligning with the principle of least privilege. This technical foundation empowers entrepreneurs to tailor access controls according to their specific data product offerings.
+By giving staff privileges to end-users and associating them with relevant Groups, YaSaas provides a flexible and secure way to control access to valuable data. This approach ensures that each user, based on their role or responsibilities, has precisely defined permissions, aligning with the principle of least privilege. This technical foundation empowers entrepreneurs to tailor access controls according to their specific data product offerings.
 
 ---
-
-
 
 ## Features
 
 * Authentication and authorization: User signup, login, logout, email verification, account management, social login support.
-* Subscription: Set up plans and collect recurring payments with Stripe. 
-* Admin panel
+* Subscriptions: Set up plans and collect recurring payments with Stripe Subscriptions. 
 * Emails
-* Admin dashboard to edit data
-* Others: Contact form 
+* Admin dashboard to edit frontend data
+* Contact form 
 * Light/dark mode
+* And more!
 
 
 ---
@@ -82,17 +80,20 @@ cd backend
 ```bash
 python -m venv venv
 # or
-virtualenv -p python3.8 ~/.virtualenvs/yasaas  #  Example using python3.8.
+virtualenv -p python3.8 ~/.virtualenvs/YaSaas  #  Example using python3.8.
 ```
 
 #### 2. Activate the virtual environment
 
 From the **backend** directory, run:
 
-On macOS:
+On macOS or Linux:
 
 ```bash
 source venv/bin/activate
+# or 
+source ~/.virtualenvs/YaSaas/bin/activate
+
 ```
 
 On Windows:
@@ -218,7 +219,7 @@ To modify the two buttons in the Hero section, make changes in the ```frontend/s
 
 ### Configurations 
 
-1. Append to the virtual environment file you created above (either `~/.virtualenvs/yasaas/bin/activate`, `venv/bin/activate`,  or `venv\scripts\activate`). Make sure to put your own Stripe and AWS keys. 
+1. Append to the virtual environment file you created above (either `~/.virtualenvs/YaSaas/bin/activate`, `venv/bin/activate`,  or `venv\scripts\activate`). Make sure to put your own Stripe and AWS keys and don't forget to re-activate the virtual environment once you are done.
 ```
 # Django
 export DJANGO_SECRET_KEY='YOUR-DJANGO-SECRET-KEY'
@@ -234,7 +235,7 @@ export STRIPE_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
 export AWS_SES_ACCESS_KEY_ID='YOUR-SES-ACCESS-KEY'  # You can also use the AWS access key
 export AWS_SES_SECRET_ACCESS_KEY='YOUR-SES-SECRET-ACCESS-KEY'  # You can also use the AWS Secret Key
 ```
-
+   
 2. As for the frontend, create a `.env` file to hold the env variables used by React in the frontend and put the following in it (put your Stripe keys). Save it on the frontend root folder (i.e. `frontend/.env`).
 ```
 REACT_APP_BASE_URL=http://127.0.0.1:8000/
@@ -324,7 +325,7 @@ tar -xvf stripe_1.18.0_linux_x86_64.tar.gz
 mv stripe /usr/local/bin
 ```
   
-* In order to test the Stripe webhook we need to open up our computer to listen for Stripe events. In terminal execute the following:
+* In order to test the Stripe webhook we need to open up our computer to the external world to listen for Stripe events. In another terminal execute the following:
   
 ```    
   stripe listen --forward-to localhost:8000/webhook
