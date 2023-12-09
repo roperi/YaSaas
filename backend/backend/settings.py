@@ -154,6 +154,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+ADMIN_URL = "admin:index"
 
 # Additional locations of static files
 STATICFILES_DIRS = [
@@ -235,7 +236,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # CUSTOM TITLES AND HEADERS
-ADMIN_URL = "admin:index"
 INDEX_TITLE = "Data Dynamo"
 SITE_TITLE = "API Portal"
 SITE_HEADER = "Data Dynamo API"
