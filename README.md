@@ -516,8 +516,8 @@ Update your frontend's env file for production use. Note that we are going to us
 
 
 # Add to .env
-REACT_APP_BASE_URL=http://your-domain-name.com/
-REACT_APP_SITE_URL=http://your-domain-name.com/
+REACT_APP_BASE_URL=http://api.your-domain-name.com/
+REACT_APP_SITE_URL=http://api.your-domain-name.com/
 REACT_APP_SIGNUP_URL=http://api.your-domain-name.com/accounts/signup/
 REACT_APP_SIGNIN_URL=http://api.your-domain-name.com/admin/
 REACT_APP_PUBLISHABLE_KEY='YOUR-STRIPE-PUBLISHABLE-KEY'
