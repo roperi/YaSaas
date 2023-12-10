@@ -388,8 +388,9 @@ There is a dataproduct app already set up as you can see in the backend folder. 
 If you create a new app do the following:
 
 1. Create new app
-```commandline
+```
 # stop runserver
+
 cd backend/
 python manage.py startapp your_app_name
 ```
@@ -463,8 +464,27 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 ACCOUNT_LOGOUT_REDIRECT_URL = 'http://your-domain-name/'
+
 # ...
+
 CUSTOM_SIGNUP_REDIRECT_URL = 'http://your-domain-name/pricing-table/?user_id='
+
+# ...
+
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Disable Django's email backend...
+EMAIL_BACKEND = 'django_ses.SESBackend'  #  ...and enable AWS SES (if using one)
+
+# ...
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # One year in seconds
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+
 ```
 
 
