@@ -1,7 +1,7 @@
 
 
 
-https://github.com/roperi/YaSaas/assets/9901508/f7d47c5d-953f-49aa-bade-41fe3aee13f9
+https://github.com/roperi/YaSaas/assets/9901508/6579f96b-c39b-438a-af55-c72245c2b4c1
 
 
 <h1 align="center">YaSaas - Monetize your data</h1>
