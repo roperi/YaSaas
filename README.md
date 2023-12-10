@@ -324,21 +324,21 @@ SITE_HEADER = "Data Dynamo API"
 ### Stripe
 These guidelines assume you have a Stripe account. If you haven't create one. For development purposes make sure to use the Test Mode whenever you are testing the webhooks, creating test products or a test subscription, getting a test pricing tables, testing clocks, etc. Test Mode has its own set of keys and secret keys; use the "Live Mode" ones only after thoroughly testing and you are ready to go live.
 
-Some useful references:
+Some useful resources:
 * [How to create products and prices](https://support.stripe.com/questions/how-to-create-products-and-prices)
 * [Create subscriptions](https://stripe.com/docs/no-code/subscriptions)
 * [Embeddable pricing table for SaaS businesses](https://stripe.com/docs/payments/checkout/pricing-table)
 * [Use incoming webhooks to get real-time updates](https://stripe.com/docs/webhooks)
 * [Test your integration with test clocks](https://stripe.com/docs/billing/testing/test-clocks)
 
-In general you should first create products, then subscriptions, and then a pricing table. Setup a local webhooks 
+In general, you should first create products, then subscriptions, and then a pricing table. Setup a local webhooks 
 
 ### Stripe webhooks for local development
 
 Install stripe client (linux)
 ```
 cd ~/opt
-wget https://github.com/stripe/stripe-cli/releases/download/v1.18.0/stripe_1.18.0_linux_x86_64.tar.gz 
+wget https://github.com/stripe/stripe-cli/releases/download/v1.18.0/stripe_1.18.0_linux_x86_64.tar.gz
 tar -xvf stripe_1.18.0_linux_x86_64.tar.gz 
 mv stripe /usr/local/bin
 ```
@@ -360,8 +360,8 @@ Things to consider:
 * YaSaas gives end-users staff privileges otherwise they won't be able to access Django Admin. End-users will be able to enter the Django Admin interface but they will only be able to view whatever you give them permission to view.  
 * __Make sure to name your Django User Groups exactly as your Stripe subscription plan's products__
 * For instance, if you name the Product in your plan as "Basic Plan" then your User Group must be named "Basic Plan" too.  
-
-Review the following Subscription webhook view to make sure you understand how Staff and Group permissions are granted to the user after he/she successfully pays:
+* When configuring your Stripe product's payment settings __make sure to check "Don't show confirmation page" and redirect customers to http://localhost:8000/admin__
+* Review the following Subscription webhook view to make sure you understand how Staff and Group permissions are granted to the user after he/she successfully pays:
 
 ```
 ## Excerpt from the stripe_webhook view found in backend/subscriptions/views.py
@@ -438,8 +438,33 @@ Once you have created your data product app, you can now create Groups based on 
 
 Go to Authentication and Authorization in the Admin dashboard, and click on Groups and start creating some. For instance, if you created a Stripe subscription plan named "Basic Plan", create a "Basic Plan" group. In this "Basic Plan" group you add **view** permissions to a "Basic Table".  Apply the same logic when creating other Groups.
 
+### Test the application
 
-### Deployment
+Replicate what you see in the video at the top of this page. In another browser or incognito window:
+1. Open the site and click on the pricing table to be taken to the SignUp page. 
+2. Fill the form with made and hit the register button, this will send an email to the user (you can confirm this by checking the backend's terminal console). 
+3. Wait to be redirected to a page with Stripe's pricing table. Click on a plan to be sent to the Customer Portal. 
+4. Fill out the payment form with the following card details:
+    * Email: The email of the fake user you registered in step 2
+    * Card number: 4242 4242 4242 4242 
+    * Expiration date: 03/25
+    * CVC: 123
+    * Name on card: Name of the user you registered in step 2
+    * Country/Postcode: Whatever you want
+5. Click on the Pay button and wait to be redirected to the admin dashboard. In the backend's terminal console you should see the user getting granted Staff and Group permissions.
+6. Once in the admin dashboard your user should have a restricted view of the dashboard (i.e. User won't be able to see anything but his/her Group models). 
+
+
+### Stripe Live Mode
+
+Before deploying in production you need to do some work on Stripe:
+
+* Change from Test Mode to Live Mode. 
+* Create your products, subscriptions and pricing table.  Don't forget to change the redirect link in your product's payment settings. That is, make sure to check "Don't show confirmation page" and redirect customers to http://api.your-domain-name.com/admin
+* __You need to use https for the Stripe webhook__. I'd recommend you LetsEncrypt to enable https in your site. 
+
+
+### Production Deployment
 
 To deploy you could use Nginx, Gunicorn and Django in tandem. 
 
@@ -454,25 +479,27 @@ DEBUG = False
 # ...
 
 ALLOWED_HOSTS = [
-    'your-domain-name',
+    'your-domain-name.com',
+    'api.your-domain-name.com',
 ]
 
 # ...
 
 CORS_ALLOWED_ORIGINS = [
-    'your-domain-name',
+    'your-domain-name.com',
+    'api.your-domain-name.com',
 ]
 
-ACCOUNT_LOGOUT_REDIRECT_URL = 'http://your-domain-name/'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'http://your-domain-name.com/'
 
 # ...
 
-CUSTOM_SIGNUP_REDIRECT_URL = 'http://your-domain-name/pricing-table/?user_id='
+CUSTOM_SIGNUP_REDIRECT_URL = 'http://your-domain-name.com/pricing-table/?user_id='
 
 # ...
 
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Disable Django's email backend...
-EMAIL_BACKEND = 'django_ses.SESBackend'  #  ...and enable AWS SES (if using one)
+EMAIL_BACKEND = 'django_ses.SESBackend'  #  ...and enable AWS SES (if using it)
 
 # ...
 
@@ -523,7 +550,6 @@ REACT_APP_SIGNIN_URL=http://api.your-domain-name.com/admin/
 REACT_APP_PUBLISHABLE_KEY='YOUR-STRIPE-PUBLISHABLE-KEY'
 REACT_APP_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
 ```
-
 
 
 #### Build backend
@@ -659,7 +685,7 @@ Example Nginx configuration file for the frontend example:
 
 
 server {
-    server_name your-domain-name.test;
+    server_name your-domain-name.com;
 
     location / {
         root /var/www/html/yasaas/frontend;
