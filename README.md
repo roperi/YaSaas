@@ -174,6 +174,13 @@ Add data through Django Admin.
 
 Go to http://127.0.0.1:8000/admin to access the Django Admin interface and sign in using the admin credentials.
 
+Note: The Services model has three fields:
+1. Title
+2. Description
+3. Icon <- Use a MaterialUI outlined icon. For instance, if you want to use the MonetizationOnOutlined icon, write down __monetization_on_outlined__. Follow that pattern for any other outlined icon you want to use.    
+
+All outlined MaterialUI icons available see [here](https://mui.com/material-ui/material-icons/?theme=Outlined).
+
 ### Customize the application
 
 This section describes how to customize the application. 
