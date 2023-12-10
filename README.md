@@ -244,10 +244,10 @@ export AWS_SES_SECRET_ACCESS_KEY='YOUR-SES-SECRET-ACCESS-KEY'  # You can also us
 # frontend/.env
 
 
-REACT_APP_BASE_URL=http://127.0.0.1:8000/
-REACT_APP_REDIRECT_SIGNUP_URL=http://127.0.0.1:8000/accounts/signup
-REACT_APP_DASHBOARD_URL=http://localhost:8000/
+REACT_APP_BASE_URL=http://localhost:8000/
 REACT_APP_SITE_URL=http://localhost:3000/
+REACT_APP_SIGNUP_URL=http://localhost:8000/accounts/signup
+REACT_APP_SIGNIN_URL=http://localhost:8000/admin
 REACT_APP_PUBLISHABLE_KEY='YOUR-STRIPE-PUBLISHABLE-KEY'
 REACT_APP_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
 ```
@@ -470,7 +470,7 @@ CUSTOM_SIGNUP_REDIRECT_URL = 'http://your-domain-name/pricing-table/?user_id='
 
 #### Update environment variables for production use
 
-Update your virtual environment activate file with your production keys.
+Update your backend's virtual environment files for production use:
 
 ``` 
 # ~/.virtualenvs/yasaas/bin/activate 
@@ -491,6 +491,23 @@ export AWS_SES_ACCESS_KEY_ID='YOUR-SES-ACCESS-KEY'  # You can also use the AWS a
 export AWS_SES_SECRET_ACCESS_KEY='YOUR-SES-SECRET-ACCESS-KEY'  # You can also use the AWS Secret Key
 ```
 
+Update your frontend's env file for production use. Note that we are going to use api subdomain for the backend server. 
+
+```
+# frontend/.env
+
+
+# Add to .env
+REACT_APP_BASE_URL=http://your-domain-name.com/
+REACT_APP_SITE_URL=http://your-domain-name.com/
+REACT_APP_SIGNUP_URL=http://api.your-domain-name.com/accounts/signup/
+REACT_APP_SIGNIN_URL=http://api.your-domain-name.com/admin/
+REACT_APP_PUBLISHABLE_KEY='YOUR-STRIPE-PUBLISHABLE-KEY'
+REACT_APP_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
+```
+
+
+
 #### Build backend
 
 Build backend example:
@@ -510,7 +527,8 @@ npm run build
 sudo cp -r build/* /var/www/html/yasaas/frontend/
 ```
 
-Give the folders access to the Nginx server 
+Give the folders access to the Nginx server: 
+
 `sudo chown www-data:www-data -R /var/www/html/yasaas/frontend/`
 
 
@@ -519,7 +537,7 @@ Give the folders access to the Nginx server
 In the backend folder there's a bin folder. In it create a `gunicorn_start_backend.sh` bash script. Update it to fit your needs (i.e. app name, paths and/or username). 
 
 ``` 
-# bin/gunicorn_start_backend.sh
+# backend/bin/gunicorn_start_backend.sh
 
 
 #!/bin/bash
