@@ -221,6 +221,9 @@ To modify the two buttons in the Hero section, make changes in the ```frontend/s
 
 1. Append to the virtual environment file you created above (either `~/.virtualenvs/YaSaas/bin/activate`, `venv/bin/activate`,  or `venv\scripts\activate`). Make sure to put your own Stripe and AWS keys and don't forget to re-activate the virtual environment once you are done.
 ```
+# ~/.virtualenvs/yasaas/bin/activate
+
+
 # Django
 export DJANGO_SECRET_KEY='YOUR-DJANGO-SECRET-KEY'
 
@@ -238,6 +241,9 @@ export AWS_SES_SECRET_ACCESS_KEY='YOUR-SES-SECRET-ACCESS-KEY'  # You can also us
    
 2. As for the frontend, create a `.env` file to hold the env variables used by React in the frontend and put the following in it (put your Stripe keys). Save it on the frontend root folder (i.e. `frontend/.env`).
 ```
+# frontend/.env
+
+
 REACT_APP_BASE_URL=http://127.0.0.1:8000/
 REACT_APP_REDIRECT_SIGNUP_URL=http://127.0.0.1:8000/accounts/signup
 REACT_APP_DASHBOARD_URL=http://localhost:8000/
@@ -251,6 +257,8 @@ REACT_APP_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
    Update the following three files located in the frontend folder and put your Google Measurement ID in each of them.
 ```
 # frontend/public/index.html
+
+  
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR-GOOGLE-MEASUREMENT-ID"></script>
   <script>
@@ -260,10 +268,10 @@ REACT_APP_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
 
     gtag('config', 'YOUR-GOOGLE-MEASUREMENT-ID');
 
-# src/App.tsx
+# frontend/src/App.tsx
 ReactGA.initialize('YOUR-GOOGLE-ANALYTICS-MEASUREMENT-ID');
 
-# src/index.tsx
+# frontend/src/index.tsx
 ReactGA.initialize('YOUR-GOOGLE-ANALYTICS-MEASUREMENT-ID');
 ```
  
@@ -308,16 +316,26 @@ SITE_HEADER = "Data Dynamo API"
 3. User gets redirected to another page holding Stripe's pricing table 
 4. User selects a subscription plan 
 5. User gets redirected to a Stripe checkout page
-6. User pays - Stripe will send us a checkout event and our event handler will give staff status and grant Group permission to the user).
-7. User gets redirected to Django admin interface already logged-in as staff and with Group permission to see his or her data. 
-8. User's subscription ends - Stripe will send an event telling us the subscription is over and our handler will then revoke user's staff and group permissions.
+6. User pays  checkout have a These guidelines Django admin interface already logged-in. as staff and with Group permission to see his or her data. 
+7. User's subscription ends - Stripe will send an event telling us the subscription is over and our handler will then revoke user's staff and group permissions.
 
-_IMPORTANT_: The reason why there's place-holder pricing table in the homepage, and not the proper Stripe's pricing table in the homepage is to force the user to a signup page in order to get their user ID which Stripe pricing table script requires (in our case we use the ID from the newly registered user). If we don't do this the user will end up paying as anonymous and he or she will end up in some sort of limbo and YaSaas won't be able to grant staff or Group permissions to the user.  
 
+
+### Stripe
+These guidelines assume you have a Stripe account. If you haven't create one. For development purposes make sure to use the Test Mode whenever you are testing the webhooks, creating test products or a test subscription, getting a test pricing tables, testing clocks, etc. Test Mode has its own set of keys and secret keys; use the "Live Mode" ones only after thoroughly testing and you are ready to go live.
+
+Some useful references:
+* [How to create products and prices](https://support.stripe.com/questions/how-to-create-products-and-prices)
+* [Create subscriptions](https://stripe.com/docs/no-code/subscriptions)
+* [Embeddable pricing table for SaaS businesses](https://stripe.com/docs/payments/checkout/pricing-table)
+* [Use incoming webhooks to get real-time updates](https://stripe.com/docs/webhooks)
+* [Test your integration with test clocks](https://stripe.com/docs/billing/testing/test-clocks)
+
+In general you should first create products, then subscriptions, and then a pricing table. Setup a local webhooks 
 
 ### Stripe webhooks for local development
 
-*  Install stripe client (linux)
+Install stripe client (linux)
 ```
 cd ~/opt
 wget https://github.com/stripe/stripe-cli/releases/download/v1.18.0/stripe_1.18.0_linux_x86_64.tar.gz 
@@ -325,13 +343,13 @@ tar -xvf stripe_1.18.0_linux_x86_64.tar.gz
 mv stripe /usr/local/bin
 ```
   
-* In order to test the Stripe webhook we need to open up our computer to the external world to listen for Stripe events. In another terminal execute the following:
+In order to test the Stripe webhook we need to open up our computer to the external world to listen for Stripe events. In another terminal execute the following:
   
 ```    
   stripe listen --forward-to localhost:8000/webhook
   ``` 
 
-* All the logic related to handling Stripe events is in the `backend/subscriptions/views.py` module. The most basic events are already being handled by YaSaas (like `checkout.session.completed` or `customer.subscription.deleted`). Please feel free to expand the if/else clauses to handle your specific use-cases (there are tons of events!).
+All the logic related to handling Stripe events is in the `backend/subscriptions/views.py` module. The most basic events are already being handled by YaSaas (like `checkout.session.completed` or `customer.subscription.deleted`). Please feel free to expand the if/else clauses to handle your specific use-cases (there are tons of events!).
 
 ### Structure your Stripe subscription plans around Django Groups and User models
 This is the most crucial aspect for monetising your data using Django Admin. YaSaas leverages the Django Admin to provide access to end-users as staff members with Group privileges. That way you can group users based on how much data access you want to give them. For instance, a subscription named "Basic Plan" might give a user permission to view a single table. Whereas a subscription named "Premium Level" might give a user permission to view multiple tables.  
@@ -342,35 +360,300 @@ Things to consider:
 * YaSaas gives end-users staff privileges otherwise they won't be able to access Django Admin. End-users will be able to enter the Django Admin interface but they will only be able to view whatever you give them permission to view.  
 * __Make sure to name your Django User Groups exactly as your Stripe subscription plan's products__
 * For instance, if you name the Product in your plan as "Basic Plan" then your User Group must be named "Basic Plan" too.  
-* Review the following code to make sure you understand how Staff and Group permissions are granted to the user after he/she pays:
+
+Review the following Subscription webhook view to make sure you understand how Staff and Group permissions are granted to the user after he/she successfully pays:
 
 ```
-## Excerpt from backend/subscriptions/views.py
-...
-product_name = stripe.Product.retrieve(subscription.plan.product).name
+## Excerpt from the stripe_webhook view found in backend/subscriptions/views.py
 
-# Add Group to user
-logger.info(f'Adding {user.username} (user #{user.id}) to Group `{product_name}`')
-user.groups.add(Group.objects.get(name=product_name))
+ product_name = stripe.Product.retrieve(subscription.plan.product).name
 
-# Add staff status to user
-logger.info(f'Granting {user.username} (user #{user.id}) with staff status')
-user.is_staff = True
-user.save()
-...
+ # Add Group to user
+ logger.info(f'Adding {user.username} (user #{user.id}) to Group `{product_name}`')
+ user.groups.add(Group.objects.get(name=product_name))
+
+ # Add staff status to user
+ logger.info(f'Granting {user.username} (user #{user.id}) with staff status')
+ user.is_staff = True
+ user.save()
 
 ```
+
+### Adding your data product to the backend
+
+Once you got the backend and frontend running, you are now ready to add your own Django data product app. 
+
+There is a dataproduct app already set up as you can see in the backend folder. This app was created as a toy example to be featured in the demo video. You could keep it by rewriting the models.py file, or create an entirely new app to hold your data product models.   
+
+If you create a new app do the following:
+
+1. Create new app
+```commandline
+# stop runserver
+cd backend/
+python manage.py startapp your_app_name
+```
+
+2. Configure the App in settings.py:
+Open the settings.py file in your Django project directory and add your app to the INSTALLED_APPS list. Find the INSTALLED_APPS section and add your app's name.
+```
+INSTALLED_APPS = [
+    # ...
+    'your_app_name',
+]
+
+```
+
+You can now safely disable the dataproducts app by commenting it. 
+
+```
+INSTALLED_APPS = [
+    # dataproducts,
+    'your_app_name',
+]
+
+```
+2. Create Models
+
+   In your app directory (your_app_name), you'll find various files. The key one is models.py. The urls.py and views.py can be left empty because the backend will take the app as part of its own.
+
+
+4. Run Migrations:
+
+    After defining your models, run the following commands to apply the initial database migrations:
+
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
+5. Start the development server to see your changes:
+
+`python manage.py runserver`
+
+### Create Groups and add permissions to each of them
+
+Once you have created your data product app, you can now create Groups based on the product plans created on Stripe. Remember to name your Groups with the same names as your subscription plans. 
+
+Go to Authentication and Authorization in the Admin dashboard, and click on Groups and start creating some. For instance, if you created a Stripe subscription plan named "Basic Plan", create a "Basic Plan" group. In this "Basic Plan" group you add **view** permissions to a "Basic Table".  Apply the same logic when creating other Groups.
 
 
 ### Deployment
 
 To deploy you could use Nginx, Gunicorn and Django in tandem. 
 
+#### Update main project's settings
+
+``` 
+# backend/backend/settings.py
+
+
+DEBUG = False
+
+# ...
+
+ALLOWED_HOSTS = [
+    'your-domain-name',
+]
+
+# ...
+
+CORS_ALLOWED_ORIGINS = [
+    'your-domain-name',
+]
+
+ACCOUNT_LOGOUT_REDIRECT_URL = 'http://your-domain-name/'
+# ...
+CUSTOM_SIGNUP_REDIRECT_URL = 'http://your-domain-name/pricing-table/?user_id='
+```
+
+
+#### Update environment variables for production use
+
+Update your virtual environment activate file with your production keys.
+
+``` 
+# ~/.virtualenvs/yasaas/bin/activate 
+
+
+# Django
+export DJANGO_SECRET_KEY='YOUR-DJANGO-SECRET-KEY'
+
+# Stripe
+export STRIPE_PUBLISHABLE_KEY='YOUR-STRIPE-PUBLISHABLE-KEY'
+export STRIPE_SECRET_KEY='YOUR-STRIPE-SECRET-KEY'
+export STRIPE_ENDPOINT_SECRET='YOUR-STRIPE-ENDPOINT-SECRET'
+export STRIPE_CUSTOMER_PORTAL_LINK=https://billing.stripe.com/p/login/live_YOUR-CUSTOMER-PORTAL-ID
+export STRIPE_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
+
+# AWS Email
+export AWS_SES_ACCESS_KEY_ID='YOUR-SES-ACCESS-KEY'  # You can also use the AWS access key
+export AWS_SES_SECRET_ACCESS_KEY='YOUR-SES-SECRET-ACCESS-KEY'  # You can also use the AWS Secret Key
+```
+
+#### Build backend
+
+Build backend example:
+
+``` 
+cd backend/
+python manage.py collectstatic
+sudo mkdir -p /var/www/html/yasaas/backend/static
+sudo cp -r staticfiles/* /var/www/html/yasaas/backend/static/
+```
+
+#### Build frontend
+
+Build frontend example:
+``` 
+npm run build 
+sudo cp -r build/* /var/www/html/yasaas/frontend/
+```
+
+Give the folders access to the Nginx server 
+`sudo chown www-data:www-data -R /var/www/html/yasaas/frontend/`
+
+
+#### Gunicorn 
+
+In the backend folder there's a bin folder. In it create a `gunicorn_start_backend.sh` bash script. Update it to fit your needs (i.e. app name, paths and/or username). 
+
+``` 
+# bin/gunicorn_start_backend.sh
+
+
+#!/bin/bash
+NAME="my-dataproduct-app"                                  # Name of the application
+DJANGODIR=/home/YOUR-USERNAME/yasaas/backend  # App project directory
+SOCKFILE=/home/YOUR-USERNAME/yasaas/backend/run/backend.sock  # we will communicte using this unix socket
+USER=your-username                                        # the user to run as
+GROUP=your-username                                     # the group to run as
+NUM_WORKERS=3                                     # how many worker processes should Gunicorn spawn
+DJANGO_SETTINGS_MODULE=backend.settings             # which settings file should Django use
+DJANGO_WSGI_MODULE=backend.wsgi                     # WSGI module name
+TIMEOUT=1800
+
+echo "Starting $NAME as `whoami`"
+
+# Activate the virtual environment
+cd $DJANGODIR
+source /home/YOUR-USERNAME/.virtualenvs/yasaas/bin/activate
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+
+# Create the run directory if it doesn't exist
+RUNDIR=$(dirname $SOCKFILE)
+test -d $RUNDIR || mkdir -p $RUNDIR
+
+# Start Gunicorn
+# Programs meant to be run under supervisor should not daemonize themselves (do not use --daemon)
+exec /home/YOUR-USERNAME/.virtualenvs/yasaas/bin/gunicorn ${DJANGO_WSGI_MODULE} \
+  --name $NAME \
+  --workers $NUM_WORKERS \
+  --max-requests 50 \
+  --max-requests-jitter 10 \
+  --user=$USER --group=$GROUP \
+  --bind=unix:$SOCKFILE \
+  --timeout $TIMEOUT \
+  --log-level=debug \
+  --log-file=-
+```
+
+Make it executable:
+
+`chmod +x bin/gunicorn_start_backend.sh`
+
+Run it 
+
+`bin/gunicorn_start_backend.sh`
+
+
+
+#### Nginx setup
+
+Example Nginx configuration file for the backend (note I'm using an 'api' subdomain):
+
+```
+# /etc/nginx/sites-available/yasaas__backend
+
+
+
+upstream backend_server {
+    server unix:///home/your-username/yasaas/backend/run/backend.sock fail_timeout=9000; # for a file socket
+}
+
+server {
+    server_name api.your-domain-name.com; 
+    charset     utf-8;
+
+    client_max_body_size 75M;   # adjust to taste
+
+    access_log /home/your-username/yasaas/backend/log/nginx-access.log combined;
+    error_log /home/your-username/yasaas/backend/log/nginx-error.log;
+
+    # Django media
+    location /media/  {
+        root /var/www/html/yasaas/backend;  # your Django project's media files - amend as required
+    }
+
+    location /static/ {
+        root /var/www/html/yasaas/backend; # your Django project's static files - amend as required
+    }
+
+    location / {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass http://backend_server;
+        proxy_read_timeout 1800;
+        proxy_connect_timeout 1800;
+        proxy_send_timeout 1800;
+        send_timeout 1800;
+    }
+
+}
+```
+
+Example Nginx configuration file for the frontend example:
+
+```
+# /etc/nginx/sites-available/yasaas__frontend 
+
+
+server {
+    server_name your-domain-name.test;
+
+    location / {
+        root /var/www/html/yasaas/frontend;
+        index index.html;  
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+Enable both nginx config files
+
+``` 
+sudo ln -s /etc/nginx/sites-available/yasaas__backend /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/yasaas__frontend /etc/nginx/sites-enabled/
+```
+Restart Nginx server
+
+`sudo service nginx restart`
+
+At this point both backend and frontend should be accessible from the browser when you navigate to 
+
+http://api.your-domain.com/admin
+
+http://your-domain.com/ 
+
+---
 
 ### TODO
-* Expand more on the Stripe subscriptions topic.
-* Expand deployment section.s
 * Adding an email confirmation page
+
 ---
 
 
