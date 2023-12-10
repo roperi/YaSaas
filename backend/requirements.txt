@@ -11,8 +11,10 @@ django-auth-style==0.8.1
 django-cors-headers==4.3.1
 django-jazzmin==2.6.0
 djangorestframework==3.14.0
+gunicorn==21.2.0
 idna==3.6
 oauthlib==3.2.2
+packaging==23.2
 Pillow==10.1.0
 pycparser==2.21
 PyJWT==2.8.0
