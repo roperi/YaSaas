@@ -458,7 +458,7 @@ Replicate what you see in the video at the top of this page. In another browser 
     * CVC: 123
     * Name on card: Name of the user you registered in step 2
     * Country/Postcode: Whatever you want
-5. Click on the Pay button and wait to be redirected to the admin dashboard. In the backend's terminal console you should see the user getting granted Staff and Group permissions.
+5. Click on the Subscribe button and wait to be redirected to the admin dashboard. In the backend's terminal console you should see the user getting granted Staff and Group permissions.
 6. Once in the admin dashboard your user should have a restricted view of the dashboard (i.e. User won't be able to see anything but his/her Group models). 
 
 
@@ -543,7 +543,7 @@ export AWS_SES_ACCESS_KEY_ID='YOUR-SES-ACCESS-KEY'  # You can also use the AWS a
 export AWS_SES_SECRET_ACCESS_KEY='YOUR-SES-SECRET-ACCESS-KEY'  # You can also use the AWS Secret Key
 ```
 
-Update your frontend's env file for production use. Note that we are going to use api subdomain for the backend server. 
+Update your frontend's env file for production use. Note that we are going to use "api" subdomain for the backend server. You could use __dashboard__ instead of __api__ , or whatever you want, remember that your customer will access his/her data from __https://subdomain-name.domain-name.com/admin__. Whatever subdomain you end up using, just make sure to update whenever you see __api__ in all snippets shown from here to the end of the document.
 
 ```
 # frontend/.env
