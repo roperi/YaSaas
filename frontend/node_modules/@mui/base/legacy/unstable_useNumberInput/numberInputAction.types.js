@@ -1,0 +1,8 @@
+export var NumberInputActionTypes = {
+  clamp: 'numberInput:clamp',
+  inputChange: 'numberInput:inputChange',
+  increment: 'numberInput:increment',
+  decrement: 'numberInput:decrement',
+  decrementToMin: 'numberInput:decrementToMin',
+  incrementToMax: 'numberInput:incrementToMax'
+};

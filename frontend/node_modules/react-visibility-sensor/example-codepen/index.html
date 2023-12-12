@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+     body {
+       min-height: 1000px;
+     }
+
+     #example {
+       height: 100px;
+     }
+
+     .msg {
+       position: fixed;
+       top: 20px;
+       left: 10px;
+     }
+
+     .sensor {
+       display: block;
+       width: 50px;
+       height: 50px;
+       background: red;
+     }
+
+     #example-container {
+       width: 200px;
+       height: 200px;
+       border: 1px solid #000;
+       overflow: auto;
+       position: relative;
+     }
+
+     #example-container .inner {
+       width: 800px;
+       height: 800px;
+     }
+
+     #example-container .sensor {
+       position: absolute;
+       left: 400px;
+       top: 400px;
+     }
+
+     #example-container .msg {
+       top: 40px;
+     }
+
+     #example-container .msg:before {
+       content: 'Contained ';
+     }
+
+     #info {
+       position: fixed;
+       z-index: 1;
+       top: 10px;
+       right: 10px;
+       width: 400px;
+     }
+
+     #foreground {
+       position: relative;
+       z-index: 2;
+       background: #FFF;
+       width: 300px;
+     }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+    </div>
+    <script src="dist/bundle.js"></script>
+  </body>
+</html>
