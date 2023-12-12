@@ -30,6 +30,24 @@ By giving staff privileges to end-users and associating them with relevant Group
 
 ![hero](../media/hero.png?raw=true)
 
+### Services
+
+![hero](../media/services.png?raw=true)
+
+### Products
+
+![hero](../media/product.png?raw=true)
+
+### Pricing table 
+
+![hero](../media/pricing-table.png?raw=true)
+
+### About
+
+![hero](../media/about.png?raw=true)
+
+### Contact form
+![hero](../media/contact-form.png?raw=true)
 
 ---
 
