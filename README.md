@@ -26,6 +26,13 @@ By giving staff privileges to end-users and associating them with relevant Group
 
 ---
 
+### Hero
+
+![hero](../media/hero.png?raw=true)
+
+
+---
+
 ## Features
 
 * Authentication and authorization: User signup, login, logout, email verification, account management, social login support.
