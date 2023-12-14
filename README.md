@@ -751,7 +751,7 @@ http://your-domain.com/
 ---
 
 
-### Copyright and licences
-Copyright © 2022 Bob's Programming Academy. MIT Licence.
+### Copyright and licenses
+Copyright © 2022 Bob's Programming Academy. MIT License.
 
-Copyright © 2023 Roperi. MIT Licence.
+Copyright © 2023 Roperi. MIT License.
