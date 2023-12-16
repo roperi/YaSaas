@@ -348,8 +348,8 @@ SITE_HEADER = "Data Dynamo API"
 3. User gets redirected to another page holding Stripe's pricing table 
 4. User selects a subscription plan 
 5. User gets redirected to a Stripe checkout page
-6. User pays  checkout have a These guidelines Django admin interface already logged-in. as staff and with Group permission to see his or her data. 
-7. User's subscription ends - Stripe will send an event telling us the subscription is over and our handler will then revoke user's staff and group permissions.
+6. User pays and gets redirected (and logged-in) to Admin page - Stripe will send an event telling us user has paid successfully, which will grant staff status and give Group permission according to the chosen subscription plan. 
+7. User subscription ends - Stripe will send an event telling us the subscription is over and our handler will then revoke user's staff and group permissions.
 
 
 
@@ -363,7 +363,7 @@ Some useful resources:
 * [Use incoming webhooks to get real-time updates](https://stripe.com/docs/webhooks)
 * [Test your integration with test clocks](https://stripe.com/docs/billing/testing/test-clocks)
 
-In general, you should first create products, then subscriptions, and then a pricing table. Setup a local webhooks 
+In general, you should first create products, then subscriptions, and then a pricing table.
 
 ### Stripe webhooks for local development
 
@@ -479,8 +479,8 @@ Replicate what you see in the video at the top of this page. In another browser 
 4. Fill out the payment form with the following card details:
     * Email: The email of the fake user you registered in step 2
     * Card number: 4242 4242 4242 4242 
-    * Expiration date: 03/25
-    * CVC: 123
+    * Expiration date: 03/25 (or any date in the future)
+    * CVC: 123 (or any other 3 digits)
     * Name on card: Name of the user you registered in step 2
     * Country/Postcode: Whatever you want
 5. Click on the Subscribe button and wait to be redirected to the admin dashboard. In the backend's terminal console you should see the user getting granted Staff and Group permissions.
@@ -568,7 +568,7 @@ export AWS_SES_ACCESS_KEY_ID='YOUR-SES-ACCESS-KEY'  # You can also use the AWS a
 export AWS_SES_SECRET_ACCESS_KEY='YOUR-SES-SECRET-ACCESS-KEY'  # You can also use the AWS Secret Key
 ```
 
-Update your frontend's env file for production use. Note that we are going to use "api" subdomain for the backend server. You could use __dashboard__ instead of __api__ , or whatever you want, remember that your customer will access his/her data from __https://subdomain-name.domain-name.com/admin__. Whatever subdomain you end up using, just make sure to update whenever you see __api__ in all snippets shown from here to the end of the document.
+Update your frontend's env file for production use. Note that so far we have been using the "api" subdomain for the backend server. But you could use __dashboard__ instead of __api__ , or whatever you want, remember that your customer will access his/her data from __https://subdomain-name.domain-name.com/admin__. Whatever subdomain you end up using, just make sure to update whenever you see __api__ in all snippets shown in this document.
 
 ```
 # frontend/.env
@@ -603,14 +603,14 @@ npm run build
 sudo cp -r build/* /var/www/html/yasaas/frontend/
 ```
 
-Give the folders access to the Nginx server: 
+Give the project folder access to the Nginx server: 
 
-`sudo chown www-data:www-data -R /var/www/html/yasaas/frontend/`
+`sudo chown www-data:www-data -R /var/www/html/yasaas/`
 
 
 #### Gunicorn 
 
-In the backend folder there's a bin folder. In it create a `gunicorn_start_backend.sh` bash script. Update it to fit your needs (i.e. app name, paths and/or username). 
+In the backend folder there's a `bin` subfolder. In it create a `gunicorn_start_backend.sh` bash script. Update it to fit your needs (i.e. app name, paths and/or username). 
 
 ``` 
 # backend/bin/gunicorn_start_backend.sh
@@ -665,7 +665,7 @@ Run it
 
 #### Nginx setup
 
-Example Nginx configuration file for the backend (note I'm using an 'api' subdomain):
+Example Nginx configuration file for the backend (note I'm using the 'api' subdomain):
 
 ```
 # /etc/nginx/sites-available/yasaas__backend
