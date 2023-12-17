@@ -288,18 +288,6 @@ REACT_APP_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
 
    Update the following three files located in the frontend folder and put your Google Measurement ID in each of them.
 ```
-# frontend/public/index.html
-
-  
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR-GOOGLE-MEASUREMENT-ID"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'YOUR-GOOGLE-MEASUREMENT-ID');
-
 # frontend/src/App.tsx
 ReactGA.initialize('YOUR-GOOGLE-ANALYTICS-MEASUREMENT-ID');
 
