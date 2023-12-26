@@ -587,6 +587,13 @@ sudo cp -r staticfiles/* /var/www/html/yasaas/backend/static/
 
 Build frontend example:
 ``` 
+export REACT_APP_BASE_URL=http://localhost:8000/
+export REACT_APP_SITE_URL=http://localhost:3000/
+export REACT_APP_SIGNUP_URL=http://localhost:8000/accounts/signup
+export REACT_APP_SIGNIN_URL=http://localhost:8000/admin
+export REACT_APP_PUBLISHABLE_KEY='YOUR-STRIPE-PUBLISHABLE-KEY'
+export REACT_APP_PRICING_TABLE_ID='YOUR-STRIPE-PRICING-TABLE-ID'
+
 npm run build 
 sudo cp -r build/* /var/www/html/yasaas/frontend/
 ```
