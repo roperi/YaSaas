@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import ReactGA from 'react-ga'; // Import ReactGA
+import ReactGA from 'react-ga4';
 
 import getTheme from './theme/theme';
 import ColorModeContext from './utils/ColorModeContext';
@@ -47,7 +47,7 @@ const App = (): JSX.Element => {
 
     // Initialize react-ga and track the initial pageview
     ReactGA.initialize('YOUR-GOOGLE-ANALYTICS-MEASUREMENT-ID');
-    ReactGA.pageview(window.location.pathname + window.location.search);
+    ReactGA.send({ hitType: 'pageview', page: window.location.pathname + window.location.search });
 
   }, []);
 
