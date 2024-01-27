@@ -55,6 +55,7 @@ By giving staff privileges to end-users and associating them with relevant Group
 
 * Authentication and authorization: User signup, login, logout, email verification, account management, social login support.
 * Subscriptions: Set up plans and collect recurring payments with Stripe Subscriptions. 
+* Conditionally include or exclude columns or actions based on the user's group membership
 * Emails
 * Admin dashboard to edit frontend data
 * Contact form 
@@ -451,6 +452,96 @@ python manage.py migrate
 5. Start the development server to see your changes:
 
 `python manage.py runserver`
+
+### Conditionally include or exclude columns from the list_display based on the user's group membership
+
+If you want to conditionally include or exclude columns from the `list_display` based on the user's group membership, you can create a function that generates the list of columns dynamically. Here's an example:
+
+```
+from django.contrib import admin
+from django.contrib.auth.models import Group
+from .models import YourModel
+
+class YourModelAdmin(admin.ModelAdmin):
+    def get_list_display(self, request):
+        list_display = self.get_dynamic_list_display(request)
+        return list_display
+
+    def get_dynamic_list_display(self, request):
+        default_list_display = [
+            # List of default columns
+            'some_column',
+            'some_other_column',
+            # ... (other columns)
+        ]
+
+        additional_columns = []
+
+        # Add additional columns based on the user's group membership
+        if request.user.is_superuser:
+            # Superusers see all columns
+            additional_columns += ['column_for_superusers']
+        elif request.user.groups.filter(name='Group1').exists():
+            # Users in Group1 see specific columns
+            additional_columns += ['column_for_group1']
+        elif request.user.groups.filter(name='Group2').exists():
+            # Users in Group2 see different columns
+            additional_columns += ['column_for_group2']
+
+        # Combine default columns and additional columns
+        dynamic_list_display = default_list_display + additional_columns
+
+        return dynamic_list_display
+
+admin.site.register(YourModel, YourModelAdmin)
+
+```
+
+
+### Conditionally include actions based on the user's group membership
+
+Likewise, if you want to conditionally display actions based on user's group membership you could do modify the `get_actions` method. Example:
+
+```
+from django.contrib import admin
+from django.contrib.auth.models import Group
+from .models import YourModel
+
+class YourModelAdmin(admin.ModelAdmin):
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+
+        # Conditionally add actions based on the user's group membership
+        if request.user.is_superuser:
+            # Superusers see all actions
+            actions['action_for_superusers'] = ('action_for_superusers', 'action_for_superusers', 'Action for superusers')
+        elif request.user.groups.filter(name='Group1').exists():
+            # Users in Group1 see specific actions
+            actions['action_for_group1'] = ('action_for_group1', 'action_for_group1', 'Action for Group1')
+        elif request.user.groups.filter(name='Group2').exists():
+            # Users in Group2 see different actions
+            actions['action_for_group2'] = ('action_for_group2', 'action_for_group2', 'Action for Group2')
+
+        return actions
+
+    def action_for_superusers(self, modeladmin, request, queryset):
+        # Action logic for superusers
+        pass
+
+    def action_for_group1(self, modeladmin, request, queryset):
+        # Action logic for users in Group1
+        pass
+
+    def action_for_group2(self, modeladmin, request, queryset):
+        # Action logic for users in Group2
+        pass
+
+    # ... rest of your code ...
+
+admin.site.register(YourModel, YourModelAdmin)
+
+```
+
 
 ### Create Groups and add permissions to each of them
 
