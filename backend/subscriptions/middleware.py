@@ -15,7 +15,7 @@ class SubscriptionMiddleware:
                 stripe.api_key = settings.STRIPE_SECRET_KEY
                 subscription = stripe.Subscription.retrieve(stripe_customer.stripeSubscriptionId)
 
-                if subscription.status not in ("active", "trailing"):
+                if subscription.status not in ("active", "trialing"):
                     # User has an inactive subscription, remove staff status
                     user.is_staff = False
                     user.save()
