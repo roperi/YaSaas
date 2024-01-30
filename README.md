@@ -512,28 +512,16 @@ class YourModelAdmin(admin.ModelAdmin):
         actions = super().get_actions(request)
 
         # Conditionally add actions based on the user's group membership
-        if request.user.is_superuser:
-            # Superusers see all actions
-            actions['action_for_superusers'] = ('action_for_superusers', 'action_for_superusers', 'Action for superusers')
-        elif request.user.groups.filter(name='Group1').exists():
-            # Users in Group1 see specific actions
-            actions['action_for_group1'] = ('action_for_group1', 'action_for_group1', 'Action for Group1')
-        elif request.user.groups.filter(name='Group2').exists():
-            # Users in Group2 see different actions
-            actions['action_for_group2'] = ('action_for_group2', 'action_for_group2', 'Action for Group2')
-
+        if request.user.is_superuser or request.user.groups.filter(name='Group1').exists():
+            actions['action_for_group1'] = (
+                self.action_for_group1,
+                'action_for_group1',
+                'Message to display'
+            )
         return actions
-
-    def action_for_superusers(self, modeladmin, request, queryset):
-        # Action logic for superusers
-        pass
 
     def action_for_group1(self, modeladmin, request, queryset):
         # Action logic for users in Group1
-        pass
-
-    def action_for_group2(self, modeladmin, request, queryset):
-        # Action logic for users in Group2
         pass
 
     # ... rest of your code ...
