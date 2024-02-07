@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'login_history',
 
-    # Backend (new)
+    # Backend
     'hero',
     'services',
     'products',
