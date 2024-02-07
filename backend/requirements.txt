@@ -5,6 +5,7 @@ cffi==1.16.0
 charset-normalizer==3.3.2
 cryptography==41.0.7
 defusedxml==0.7.1
+dj-user-login-history==1.0.5
 Django==4.2.4
 django-allauth==0.58.2
 django-auth-style==0.8.1
