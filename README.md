@@ -80,6 +80,12 @@ By giving staff privileges to end-users and associating them with relevant Group
 * AWS Simple Email Service
 * Google Analytics
 
+### Django apps
+* django-jazzmin
+* django-allauth
+* django-auth-style
+* dj-user-login-history
+* django-cors-headers
 ---
 
 ### Prerequisites
@@ -324,12 +330,17 @@ SITE_HEADER = "Data Dynamo API"
 <title>Data Dynamo</title>
 ```
 
-9. In the `frontend/public/` folder update the favicon.ico and logo.svg with your own ones.
+9. Included in YaSaas is [dj-user-login-history](https://pypi.org/project/dj-user-login-history/) which keeps track of user login history. If you want to change its behaviour check in their [docs](https://pypi.org/project/dj-user-login-history/).
+
+
+10. In the `frontend/public/` folder update the favicon.ico and logo.svg with your own ones.
 
 ```
 # frontend/public/img/logo.svg
 # frontend/public/favicon.ico
 ```
+
+
 
 ### Stripe Subscriptions Workflow (see video at the top)
 1. User clicks on a place-holder pricing table in homepage
