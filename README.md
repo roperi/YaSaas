@@ -56,6 +56,7 @@ By giving staff privileges to end-users and associating them with relevant Group
 * Authentication and authorization: User signup, login, logout, email verification, account management, social login support.
 * Subscriptions: Set up plans and collect recurring payments with Stripe Subscriptions. 
 * Conditionally include or exclude columns or actions based on the user's group membership
+* User login history tracking
 * Emails
 * Admin dashboard to edit frontend data
 * Contact form 
