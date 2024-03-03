@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'login_history',
+    'easyaudit',
 
     # Backend
     'hero',
@@ -72,7 +73,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "allauth.account.middleware.AccountMiddleware",  # New
+    "allauth.account.middleware.AccountMiddleware",
+    "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
+
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -269,3 +272,11 @@ JAZZMIN_SETTINGS = {
     "site_logo": "img/logo.svg",
     "copyright": "Data Dynamo",
 }
+
+# EASY AUDIT
+DJANGO_EASY_AUDIT_UNREGISTERED_URLS_DEFAULT = [
+    r'^/static/',
+    r'^/favicon.ico$',
+    r'^/admin/easyaudit/',
+    r'^/admin/jsi18n/',
+]
