@@ -57,6 +57,7 @@ By giving staff privileges to end-users and associating them with relevant Group
 * Subscriptions: Set up plans and collect recurring payments with Stripe Subscriptions. 
 * Conditionally include or exclude columns or actions based on the user's group membership
 * User login history tracking
+* User action tracking (including requests within the admin)
 * Emails
 * Admin dashboard to edit frontend data
 * Contact form 
@@ -86,6 +87,7 @@ By giving staff privileges to end-users and associating them with relevant Group
 * django-allauth
 * django-auth-style
 * dj-user-login-history
+* django-easy-audit
 * django-cors-headers
 ---
 
@@ -333,8 +335,9 @@ SITE_HEADER = "Data Dynamo API"
 
 9. Included in YaSaas is [dj-user-login-history](https://pypi.org/project/dj-user-login-history/) which keeps track of user login history. If you want to change its behaviour check in their [docs](https://pypi.org/project/dj-user-login-history/).
 
+10. Included in YaSaas is [django-easy-audit](https://github.com/soynatan/django-easy-audit) which allows you to keep track of every action taken by your users. Please refer to its [docs](https://github.com/soynatan/django-easy-audit/wiki/Settings) to customise its behaviour.
 
-10. In the `frontend/public/` folder update the favicon.ico and logo.svg with your own ones.
+11. In the `frontend/public/` folder update the favicon.ico and logo.svg with your own ones.
 
 ```
 # frontend/public/img/logo.svg
