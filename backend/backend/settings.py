@@ -277,6 +277,18 @@ JAZZMIN_SETTINGS = {
 DJANGO_EASY_AUDIT_UNREGISTERED_URLS_DEFAULT = [
     r'^/static/',
     r'^/favicon.ico$',
+    r'^/webhook/',
+]
+
+DJANGO_EASY_AUDIT_UNREGISTERED_URLS_EXTRA = [
     r'^/admin/easyaudit/',
     r'^/admin/jsi18n/',
+    r'^/admin/login/',
 ]
+
+DJANGO_EASY_AUDIT_REGISTERED_URLS = [
+    r'^/admin/',
+]
+
+# Track remote ID
+DJANGO_EASY_AUDIT_REMOTE_ADDR_HEADER='HTTP_X_FORWARDED_FOR'
